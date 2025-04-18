@@ -1,28 +1,27 @@
 import { Router } from "express";
-import { adminLogin, deleteUser } from "../controllers/adminController";
+import {
+  adminLogin,
+  createUser,
+  deleteUser,
+  getAllUsers,
+  updateUser,
+} from "../controllers/adminController";
 
 const router = Router();
 
 router.post("/login", adminLogin);
-
-router.get("/users", (req, res) => {
+router.get("/logout", (req, res) => {
   res.json({
-    endpoint: "/admin/users",
+    endpoint: "/admin/logout",
   });
 });
 
-router.post("/users", (req, res) => {
-  res.json({
-    endpoint: "/admin/users",
-  });
-});
+router.get("/users", getAllUsers);
+
+router.post("/users", createUser);
 
 router.delete("/users/:userId", deleteUser);
 
-router.put("/users/:userId", (req, res) => {
-  res.json({
-    endpoint: "/admin/updateuser",
-  });
-});
+router.put("/users/:userId", updateUser);
 
 export default router;

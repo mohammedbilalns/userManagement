@@ -1,18 +1,29 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { AdminType } from "../../types/adminType";
 import { UserType } from "../../types/userType";
-const API_URL = "http://localhost:3000/api/admin";
+const API_URL = "http://localhost:3000/api/admin/";
 
 const login = async (adminData: AdminType) => {
-  const response = await axios.post(API_URL + "login", adminData);
-  if (response.data) {
-    localStorage.setItem("admin", JSON.stringify(response.data));
+  try {
+    const response = await axios.post(API_URL + "login", adminData);
+    if (response.data) {
+      localStorage.setItem("admin", JSON.stringify(response.data));
+    }
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<{ message: string }>;
+    console.error("Admin Login error", error.response?.data || error.message);
+    throw error;
   }
-  return response.data;
 };
 
-const logout = () => {
-  localStorage.removeItem("admin");
+const logout = async () => {
+  try {
+    await axios.post(API_URL + "logout");
+  } catch (error) {
+    console.warn("Admin Logout request failed:", error);
+  }
+  localStorage.removeItem("user");
 };
 
 const getUsers = async (token: string) => {

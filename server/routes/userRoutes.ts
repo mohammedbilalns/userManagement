@@ -1,20 +1,18 @@
 import { Router } from "express";
-import { registerUser, loginUser, logoutUser} from "../controllers/userController"
-const router = Router()
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  updateUserProfile,
+} from "../controllers/userController";
+import authMiddleware from "../middleware/authMiddleware";
 
-router.post('/register', registerUser)
+const router = Router();
 
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.get("/logout", logoutUser);
 
-router.post('/login', loginUser )
+router.put("/update-profile", authMiddleware.protect, updateUserProfile);
 
-router.get('/logout', logoutUser)
-
-
-router.put('/update-profile', (req,res)=>{
-    res.json({
-        endpoint:"/update-profile"
-    })
-})
-
-
-export default router
+export default router;
