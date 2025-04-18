@@ -1,6 +1,12 @@
-
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../app/store";
+import { logout } from "../features/auth/authSlice";
 
 const HomePage = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const handleLogout = ()=>{
+    dispatch(logout())
+  }
   return (
     <div className="min-h-screen bg-base-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -18,6 +24,7 @@ const HomePage = () => {
           <div className="flex justify-center mt-10">
             <button
               className="btn btn-error text-white px-6 py-3 text-base font-semibold rounded-lg hover:brightness-110 transition duration-200"
+            onClick={handleLogout}
             >
               Logout
             </button>

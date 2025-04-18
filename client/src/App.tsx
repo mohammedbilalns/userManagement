@@ -1,32 +1,65 @@
-
-import {BrowserRouter, Routes, Route} from "react-router-dom"
-import Login from "./pages/Login"
-import Signup from "./pages/Register"
-import Home from "./pages/Home"
-import UserProfile from "./pages/UserProfile"
-import AdminLogin from "./pages/AdminLogin" 
-import DashBoard from "./pages/DashBoard"
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Signup from "./pages/Register";
+import Home from "./pages/Home";
+import UserProfile from "./pages/UserProfile";
+import AdminLogin from "./pages/AdminLogin";
+import DashBoard from "./pages/DashBoard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import NavBar from "./components/Navbar";
+import PublicRoute from "./components/PublicRoute";
 
 function App() {
+  return (
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <>
+                  <NavBar></NavBar>
+                  <Home />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <>
+                  <NavBar></NavBar>
 
-	return (
-		<>
-			<BrowserRouter>
-				<Routes>
+                  <UserProfile />
+                </>
+              </ProtectedRoute>
+            }
+          />
 
-					<Route path="/" element = {<Home></Home>}> </Route>
-					<Route path="/login" element = {<Login/>}></Route>
-					<Route path="/register" element = {<Signup/>}></Route>
-					<Route path="/profile" element= {<UserProfile></UserProfile>}></Route>
-					<Route path="/admin/login" element = {<AdminLogin/>}></Route>	
-					<Route path="/admin/dashboard" element = {<DashBoard/>}></Route>
-
-				</Routes>
-			</BrowserRouter>
-
-		</>
-	)
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <Signup></Signup>
+              </PublicRoute>
+            }
+          />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<DashBoard />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
 
-export default App
+export default App;

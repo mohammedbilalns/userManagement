@@ -2,7 +2,7 @@ import { Router } from "express";
 import { registerUser, loginUser, logoutUser} from "../controllers/userController"
 const router = Router()
 
-router.post('/signup', registerUser)
+router.post('/register', registerUser)
 
 
 router.post('/login', loginUser )

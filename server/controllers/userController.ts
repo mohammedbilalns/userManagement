@@ -9,6 +9,8 @@ const { log } = require("mercedlogger");
 const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     try {
+      console.log("Request recieved at the server ")
+
       const { name, email, password } = req.body;
 
       if (!name || !email || !password) {
