@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { register, reset } from "../features/auth/authSlice";
 import { RootState } from "../app/store";
 import { AppDispatch } from "../app/store";
+
 export default function Register() {
   const [formData, setFormData] = useState({
     name: "",
@@ -12,9 +13,16 @@ export default function Register() {
     confirmPassword: "",
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const { name, email, password, confirmPassword } = formData;
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state: RootState) => state.auth
@@ -29,27 +37,67 @@ export default function Register() {
   }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+
+  const validate = () => {
+    const newErrors = {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
+    let isValid = true;
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required.";
+      isValid = false;
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required.";
+      isValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+      newErrors.email = "Email format is invalid.";
+      isValid = false;
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required.";
+      isValid = false;
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
+      isValid = false;
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password.";
+      isValid = false;
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
+    if (!validate()) return;
 
-    const userData = {
-      name,
-      email,
-      password,
-    };
-    const dispatch = useDispatch<AppDispatch>();
-
+    const userData = { name, email, password };
     dispatch(register(userData));
   };
 
@@ -59,68 +107,90 @@ export default function Register() {
         <div className="card-body">
           <h2 className="text-2xl font-bold text-center">Sign Up</h2>
           <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Name */}
             <div className="form-control">
               <label className="label" htmlFor="name">
                 <span className="label-text">Name</span>
               </label>
               <input
-                type="text"
                 id="name"
-                placeholder="Your Name"
                 name="name"
-                className="input input-bordered w-full"
-                required
+                placeholder="Your Name"
+                className={`input input-bordered w-full ${
+                  errors.name ? "input-error" : ""
+                }`}
                 onChange={handleChange}
                 value={name}
               />
+              {errors.name && (
+                <span className="text-sm text-error mt-1">{errors.name}</span>
+              )}
             </div>
 
+            {/* Email */}
             <div className="form-control">
               <label className="label" htmlFor="email">
                 <span className="label-text">Email</span>
               </label>
               <input
-                type="email"
                 id="email"
                 name="email"
                 placeholder="email@example.com"
-                className="input input-bordered w-full"
-                required
+                className={`input input-bordered w-full ${
+                  errors.email ? "input-error" : ""
+                }`}
                 onChange={handleChange}
                 value={email}
               />
+              {errors.email && (
+                <span className="text-sm text-error mt-1">{errors.email}</span>
+              )}
             </div>
 
+            {/* Password */}
             <div className="form-control">
               <label className="label" htmlFor="password">
                 <span className="label-text">Password</span>
               </label>
               <input
-                type="password"
                 id="password"
-                placeholder="Password"
                 name="password"
-                className="input input-bordered w-full"
-                required
+                type="password"
+                placeholder="Password"
+                className={`input input-bordered w-full ${
+                  errors.password ? "input-error" : ""
+                }`}
                 onChange={handleChange}
                 value={password}
               />
+              {errors.password && (
+                <span className="text-sm text-error mt-1">
+                  {errors.password}
+                </span>
+              )}
             </div>
 
+            {/* Confirm Password */}
             <div className="form-control">
               <label className="label" htmlFor="confirmPassword">
                 <span className="label-text">Confirm Password</span>
               </label>
               <input
-                type="password"
                 id="confirmPassword"
                 name="confirmPassword"
                 placeholder="Confirm Password"
-                className="input input-bordered w-full"
-                required
+                className={`input input-bordered w-full ${
+                  errors.confirmPassword ? "input-error" : ""
+                }`}
                 onChange={handleChange}
                 value={confirmPassword}
+                type="password"
               />
+              {errors.confirmPassword && (
+                <span className="text-sm text-error mt-1">
+                  {errors.confirmPassword}
+                </span>
+              )}
             </div>
 
             <div className="form-control mt-6">
@@ -137,9 +207,9 @@ export default function Register() {
           <div className="text-center mt-4">
             <p className="text-sm">
               Already have an account?{" "}
-              <button className="text-primary hover:underline cursor-pointer">
-                <Link to="/login">Login</Link>
-              </button>
+              <Link to="/login" className="text-primary hover:underline">
+                Login
+              </Link>
             </p>
           </div>
         </div>
