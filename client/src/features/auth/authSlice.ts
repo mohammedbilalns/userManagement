@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { UserType } from "../../types/userType";
+import { User } from "../../types/user.types";
 import authService from "./authService";
 import { AxiosError } from "axios";
 
@@ -17,7 +17,7 @@ const initialState = {
 
 export const register = createAsyncThunk(
   "auth/register",
-  async (userData: UserType, thunkApi) => {
+  async (userData: User, thunkApi) => {
     try {
       const response = await authService.register(userData);
       toast.success("Registration success");
@@ -36,7 +36,7 @@ export const register = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "auth/login",
-  async (userData: UserType, thunkAPI) => {
+  async (userData: User, thunkAPI) => {
     try {
       const response = await authService.login(userData);
       toast.success("Login successful!");

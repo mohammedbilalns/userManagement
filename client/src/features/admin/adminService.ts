@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios";
-import { AdminType } from "../../types/adminType";
-import { UserType } from "../../types/userType";
+import { Admin } from "../../types/admin.types";
+import { User} from "../../types/user.types";
 const API_URL = "http://localhost:3000/api/admin/";
 
-const login = async (adminData: AdminType) => {
+const login = async (adminData: Admin) => {
   try {
     const response = await axios.post(API_URL + "login", adminData);
     if (response.data) {
@@ -26,6 +26,7 @@ const logout = async () => {
   localStorage.removeItem("user");
 };
 
+//done
 const getUsers = async (token: string) => {
   const config = {
     headers: {
@@ -37,7 +38,7 @@ const getUsers = async (token: string) => {
   return response.data;
 };
 
-const createUser = async (userData: UserType, token: string) => {
+const createUser = async (userData: User, token: string) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -47,7 +48,7 @@ const createUser = async (userData: UserType, token: string) => {
   return response.data;
 };
 
-const updateUser = async (id: string, userData: UserType, token: string) => {
+const updateUser = async (id: string, userData: User, token: string) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,

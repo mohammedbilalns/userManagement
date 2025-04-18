@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { register, reset } from "../features/auth/authSlice";
 import { RootState } from "../app/store";
 import { AppDispatch } from "../app/store";
-
+import { User } from "../types/user.types";
 export default function Register() {
   const [formData, setFormData] = useState({
     name: "",
@@ -98,7 +98,7 @@ export default function Register() {
     if (!validate()) return;
 
     const userData = { name, email, password };
-    dispatch(register(userData));
+    dispatch(register(userData as User));
   };
 
   return (

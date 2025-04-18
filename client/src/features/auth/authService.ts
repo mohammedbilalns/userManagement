@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios";
-import { UserType } from "../../types/userType";
+import { User } from "../../types/user.types";
 
 const API_URL = "http://localhost:3000/api/user";
 
-const register = async (userData: UserType) => {
+const register = async (userData: User) => {
   try {
     const response = await axios.post(API_URL + "/register", userData);
     if (response.data) {
@@ -18,7 +18,7 @@ const register = async (userData: UserType) => {
   }
 };
 
-const login = async (userData: UserType) => {
+const login = async (userData: User) => {
   try {
     const response = await axios.post(API_URL + "/login", userData);
 
