@@ -7,8 +7,6 @@ import { Admin } from "../../types/admin.types";
 import { User } from "../../types/user.types";
 import { AdminState } from "../../types/admin.types";
 
-
-
 const storedAdmin = localStorage.getItem("admin");
 const admin = storedAdmin ? JSON.parse(storedAdmin) : null;
 const initialState: AdminState = {
@@ -20,16 +18,18 @@ const initialState: AdminState = {
   message: "",
 };
 
-
 // Admin login
 export const adminLogin = createAsyncThunk(
   "admin/login",
   async (credentials: Admin, thunkAPI) => {
     try {
-      return await adminService.login(credentials);
+      const response = await adminService.login(credentials);
+      toast.success("Admin Login Successful");
+      return response;
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       const message = error.response?.data?.message || error.message;
+      toast.error(message);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -106,7 +106,7 @@ export const updateUser = createAsyncThunk(
       const token = (thunkAPI.getState() as RootState).admin.admin?.token;
       if (!token) {
         throw new Error("No token found");
-      } 
+      }
       return await adminService.updateUser(userId, userData, token);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;

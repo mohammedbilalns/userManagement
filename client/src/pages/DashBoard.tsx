@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
+import { adminLogout } from "../features/admin/adminSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../app/store";
 
 export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const handleLogout = () => console.log("Logout");
+  const handleLogout = () => {
+    dispatch(adminLogout());
+  };
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Create user");
@@ -15,7 +21,8 @@ export default function AdminDashboard() {
     console.log("Edit", user);
     setShowEditModal(true);
   };
-  const handleDeleteUser = (id: string, name: string) => console.log("Delete", id, name);
+  const handleDeleteUser = (id: string, name: string) =>
+    console.log("Delete", id, name);
   const handleUpdateUser = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Update user");
@@ -23,8 +30,20 @@ export default function AdminDashboard() {
 
   const admin = { email: "admin@example.com" };
   const filteredUsers = [
-    { _id: "1", name: "Alice", email: "alice@example.com", createdAt: new Date().toISOString(), profileImage: "" },
-    { _id: "2", name: "Bob", email: "bob@example.com", createdAt: new Date().toISOString(), profileImage: "" },
+    {
+      _id: "1",
+      name: "Alice",
+      email: "alice@example.com",
+      createdAt: new Date().toISOString(),
+      profileImage: "",
+    },
+    {
+      _id: "2",
+      name: "Bob",
+      email: "bob@example.com",
+      createdAt: new Date().toISOString(),
+      profileImage: "",
+    },
   ];
 
   const [newUser, setNewUser] = useState({ name: "", email: "", password: "" });
@@ -41,7 +60,9 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center space-x-4">
           <span>{admin?.email}</span>
-          <button onClick={handleLogout} className="btn btn-error text-white">Logout</button>
+          <button onClick={handleLogout} className="btn btn-error text-white">
+            Logout
+          </button>
         </div>
       </div>
 
@@ -52,9 +73,16 @@ export default function AdminDashboard() {
               <div className="flex justify-between items-center border-b pb-4">
                 <div>
                   <h2 className="card-title">User Management</h2>
-                  <p className="text-sm text-gray-500">List of all registered users</p>
+                  <p className="text-sm text-gray-500">
+                    List of all registered users
+                  </p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>Create User</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  Create User
+                </button>
               </div>
 
               <div className="form-control my-4">
@@ -92,16 +120,32 @@ export default function AdminDashboard() {
                             <div>{user.name}</div>
                           </td>
                           <td>{user.email}</td>
-                          <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                          <td>
+                            {new Date(user.createdAt).toLocaleDateString()}
+                          </td>
                           <td className="text-right">
-                            <button onClick={() => handleEditUser(user)} className="btn btn-sm btn-primary mr-2">Edit</button>
-                            <button onClick={() => handleDeleteUser(user._id, user.name)} className="btn btn-sm btn-error">Delete</button>
+                            <button
+                              onClick={() => handleEditUser(user)}
+                              className="btn btn-sm btn-primary mr-2"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteUser(user._id, user.name)
+                              }
+                              className="btn btn-sm btn-error"
+                            >
+                              Delete
+                            </button>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={4} className="text-center text-gray-500">No users found</td>
+                        <td colSpan={4} className="text-center text-gray-500">
+                          No users found
+                        </td>
                       </tr>
                     )}
                   </tbody>
@@ -122,7 +166,9 @@ export default function AdminDashboard() {
                 placeholder="Name"
                 className="input input-bordered w-full"
                 value={newUser.name}
-                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, name: e.target.value })
+                }
                 required
               />
               <input
@@ -130,7 +176,9 @@ export default function AdminDashboard() {
                 placeholder="Email"
                 className="input input-bordered w-full"
                 value={newUser.email}
-                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, email: e.target.value })
+                }
                 required
               />
               <input
@@ -138,12 +186,22 @@ export default function AdminDashboard() {
                 placeholder="Password"
                 className="input input-bordered w-full"
                 value={newUser.password}
-                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, password: e.target.value })
+                }
                 required
               />
               <div className="modal-action">
-                <button type="button" onClick={() => setShowCreateModal(false)} className="btn">Cancel</button>
-                <button type="submit" className="btn btn-primary">Create</button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="btn"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Create
+                </button>
               </div>
             </form>
           </div>
@@ -160,12 +218,22 @@ export default function AdminDashboard() {
                 placeholder="Name"
                 className="input input-bordered w-full"
                 value={editUserData.name}
-                onChange={(e) => setEditUserData({ ...editUserData, name: e.target.value })}
+                onChange={(e) =>
+                  setEditUserData({ ...editUserData, name: e.target.value })
+                }
                 required
               />
               <div className="modal-action">
-                <button type="button" onClick={() => setShowEditModal(false)} className="btn">Cancel</button>
-                <button type="submit" className="btn btn-primary">Update</button>
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="btn"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Update
+                </button>
               </div>
             </form>
           </div>

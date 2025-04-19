@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { Admin } from "../../types/admin.types";
-import { User} from "../../types/user.types";
+import { User } from "../../types/user.types";
 const API_URL = "http://localhost:3000/api/admin/";
 
 const login = async (adminData: Admin) => {
@@ -23,7 +23,7 @@ const logout = async () => {
   } catch (error) {
     console.warn("Admin Logout request failed:", error);
   }
-  localStorage.removeItem("user");
+  localStorage.removeItem("admin");
 };
 
 //done
