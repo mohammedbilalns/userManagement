@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from "../app/store";
 import { adminLogin } from "../features/admin/adminSlice";
+
 export default function AdminLogin() {
   const [formData, setFormData] = useState({
     email: "",
@@ -18,15 +19,15 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { admin, isLoading, isError, isSuccess, message } = useSelector(
+  const { admin, isLoading} = useSelector(
     (state: RootState) => state.admin
   );
 
   useEffect(() => {
-    if (isSuccess || admin) {
-      navigate("/admin/dashboard");
+    if (admin) {
+      navigate("/admin/dashboard", { replace: true });
     }
-  }, [admin, isError, isSuccess, message, navigate]);
+  }, [admin, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

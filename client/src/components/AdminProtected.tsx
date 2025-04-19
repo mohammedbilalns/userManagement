@@ -1,7 +1,7 @@
 import { RootState } from "../app/store";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminProtected({
   children,
@@ -9,9 +9,16 @@ export default function AdminProtected({
   children: ReactElement;
 }) {
   const { admin } = useSelector((state: RootState) => state.admin);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!admin) {
+      navigate("/admin/login", { replace: true });
+    }
+  }, [admin, navigate]);
 
   if (!admin) {
-    return <Navigate to="/admin/login" />;
+    return null;
   }
 
   return children;

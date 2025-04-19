@@ -18,11 +18,6 @@ const login = async (adminData: Admin) => {
 };
 
 const logout = async () => {
-  try {
-    await axios.post(API_URL + "logout");
-  } catch (error) {
-    console.warn("Admin Logout request failed:", error);
-  }
   localStorage.removeItem("admin");
 };
 
