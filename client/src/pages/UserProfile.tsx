@@ -1,27 +1,105 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { RootState } from "../app/store";
+import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { updateProfile } from "../features/users/userSlice";
 
 const ProfilePage: React.FC = () => {
+  const { user } = useSelector((state: RootState) => state.auth);
+  console.log("User: ", user);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [name, setName] = useState<string>("John Doe");
-  const [email] = useState<string>("john@example.com");
+  const [name, setName] = useState<string>(user.name);
+  const [email] = useState<string>(user.email);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
+  // Initialize image preview when user data changes
+  useEffect(() => {
+    if (user?.profileImage) {
+      setImagePreview(user.profileImage);
+    }
+  }, [user]);
+
+  console.log(imagePreview);
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const CLOUDINARY_API_KEY = import.meta.env.VITE_CLOUDINARY_API_KEY;
+  const CLOUDINARY_UPLOAD_PRESET = import.meta.env
+    .VITE_CLOUDINARY_UPLOAD_PRESET;
+
+  const uploadToCloudinary = async () => {
+    if (!imageFile) return;
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("cloud_name", CLOUDINARY_CLOUD_NAME);
+    formData.append("api_key", CLOUDINARY_API_KEY);
+
+    try {
+      console.log("Uploading to Cloudinary...");
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      console.log("Upload successful:", data);
+      if (!data.secure_url) {
+        toast.error("Failed to upload image to Cloudinary");
+        return user.profileImage || null;
+      }
+      console.log("Upload successful:", data.secure_url);
+      return data.secure_url;
+    } catch (error) {
+      console.error("Error uploading to Cloudinary:", error);
+      toast.error("Error uploading to Cloudinary");
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const imageUrl = await uploadToCloudinary();
+
+      const updatedUser = {
+        name,
+        profileImage: imageUrl || user.profileImage,
+      };
+
+      const result = await dispatch(updateProfile(updatedUser) as any);
+
+      if (result.payload) {
+        toast.success("Profile updated successfully");
+        setIsEditing(false);
+        setName(updatedUser.name);
+        setImagePreview(imageUrl || user.profileImage);
+      } else {
+        toast.error("Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Error submitting form");
+    } finally {
       setIsLoading(false);
       setIsEditing(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -34,15 +112,17 @@ const ProfilePage: React.FC = () => {
         <div className="p-6">
           <div className="flex flex-col items-center mb-6">
             <div className="relative mb-4">
-              {imagePreview ? (
+              {imagePreview || user.profileImage ? (
                 <img
-                  src={imagePreview}
+                  src={imagePreview || user.profileImage}
                   alt="Profile"
                   className="w-32 h-32 object-cover rounded-full border-4 border-primary"
                 />
               ) : (
                 <div className="w-32 h-32 rounded-full bg-base-300 flex items-center justify-center border-4 border-primary">
-                  <span className="text-4xl text-base-content">{name.charAt(0)}</span>
+                  <span className="text-4xl text-base-content">
+                    {name.charAt(0)}
+                  </span>
                 </div>
               )}
 
@@ -97,7 +177,9 @@ const ProfilePage: React.FC = () => {
               <div className="flex space-x-3">
                 <button
                   type="submit"
-                  className={`btn btn-primary w-full ${isLoading || isUploading ? "btn-disabled" : ""}`}
+                  className={`btn btn-primary w-full ${
+                    isLoading || isUploading ? "btn-disabled" : ""
+                  }`}
                 >
                   {isLoading || isUploading ? (
                     <>
@@ -123,7 +205,9 @@ const ProfilePage: React.FC = () => {
           ) : (
             <div className="space-y-4">
               <div className="border-t pt-4">
-                <h4 className="font-medium text-base-content mb-2">Account Information</h4>
+                <h4 className="font-medium text-base-content mb-2">
+                  Account Information
+                </h4>
                 <div className="grid grid-cols-2 gap-2 text-sm text-base-content">
                   <div className="opacity-70">Name:</div>
                   <div>{name}</div>

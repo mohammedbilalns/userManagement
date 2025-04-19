@@ -83,9 +83,11 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
       id: user._id,
       name: user.name,
       email: user.email,
+      profileImage: user.profileImage,
       token: generateToken({
         id: user._id,
         name: user.name,
+        profileImage: user.profileImage,
         email: user.email,
       }),
     });
@@ -96,42 +98,55 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-const updateUserProfile = asyncHandler(async (req: AuthenticatedRequest, res:Response) => {
-  const { userId, name, profileImage } = req.body;
+const updateUserProfile = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response) => {
+    const { name, profileImage } = req.body;
+    const userId = req.user?.id;
 
-  // Verify that the user is updating their own profile
-  if (!req.user || req.user.id !== userId) {
-    return res.status(403).json({
-      message: "Not authorized to update this profile",
-    });
+    console.log("Update request received:", { userId, name, profileImage });
+
+    if (!userId) {
+      return res.status(403).json({
+        message: "Not authorized to update this profile",
+      });
+    }
+
+    try {
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      // Update user fields
+      if (name) user.name = name;
+      if (profileImage) user.profileImage = profileImage;
+
+      const updatedUser = await user.save();
+      console.log("User updated successfully:", updatedUser);
+
+      res.status(200).json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        profileImage: updatedUser.profileImage,
+        message: "Profile updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({
+        message: "Error updating profile",
+      });
+    }
   }
+);
 
-  const user = await User.findById(userId);
-
-  if (!user) {
-    return res.status(404).json({
-      message: "User not found",
-    });
-  }
-
-  // Update user fields
-  if (name) user.name = name;
-  if (profileImage) user.profileImage = profileImage;
-
-  const updatedUser = await user.save();
-
-  res.status(200).json({
-    _id: updatedUser._id,
-    name: updatedUser.name,
-    email: updatedUser.email,
-    profileImage: updatedUser.profileImage,
-    message: "Profile updated successfully",
-  });
-});
 
 const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({
     message: "Logged out successfully",
   });
 });
-export { registerUser, loginUser, logoutUser ,updateUserProfile};
+export { registerUser, loginUser, logoutUser, updateUserProfile };

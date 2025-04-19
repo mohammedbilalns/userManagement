@@ -10,10 +10,9 @@ const initialState = {
   message: "",
 };
 
-// Update user profile
 export const updateProfile = createAsyncThunk(
   "user/updateProfile",
-  async (userData: User, thunkAPI) => {
+  async (userData: Partial<User>, thunkAPI) => {
     try {
       const token = (thunkAPI.getState() as RootState).auth.user.token;
       return await userService.updateProfile(userData, token);
