@@ -17,54 +17,60 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
-const protect = asyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  let token;
+const protect = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    let token;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
-      // Get token from header
-      token = req.headers.authorization.split(" ")[1];
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      try {
+        // Get token from header
+        token = req.headers.authorization.split(" ")[1];
 
-      // Verify token
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET || "1921u0030"
-      ) as JwtPayload;
+        // Verify token
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET || "1921u0030"
+        ) as JwtPayload;
 
-      // Check if admin token
-      if (decoded.role === "admin") {
-        req.user = { id: "admin", email: decoded.email, role: "admin" };
-      } else {
-        const user = await User.findById(decoded.id).select("-password");
-        if (user) {
-          req.user = {
-            id: user._id.toString(),
-            email: user.email,
-          };
+        // Check if admin token
+        if (decoded.role === "admin") {
+          req.user = { id: "admin", email: decoded.email, role: "admin" };
+        } else {
+          const user = await User.findById(decoded.id).select("-password");
+          if (user) {
+            req.user = {
+              id: user._id.toString(),
+              email: user.email,
+            };
+          }
         }
-      }
 
-      next();
-    } catch (error) {
-      console.error(error);
+        next();
+      } catch (error) {
+        console.error(error);
+        res.status(401).json({
+          message: "Not authorized, token failed",
+        });
+        return;
+      }
+    } else {
       res.status(401).json({
-        message: "Not authorized, token failed",
+        message: "Not authorized, no token",
       });
       return;
     }
-  } else {
-    res.status(401).json({
-      message: "Not authorized, no token",
-    });
-    return;
   }
-});
+);
 
 // Admin only middleware
-const adminOnly = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const adminOnly = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   if (req.user && req.user.role === "admin") {
     next();
   } else {

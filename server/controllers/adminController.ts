@@ -2,8 +2,8 @@ import { asyncHandler } from "../config/asyncHandler";
 import { Request, Response } from "express";
 import generateToken from "../config/token";
 import User from "../models/userModel";
-import { Types } from "mongoose";
 import bcrypt from "bcryptjs";
+
 // Admin login
 const adminLogin = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -19,7 +19,7 @@ const adminLogin = asyncHandler(async (req: Request, res: Response) => {
         id: "admin",
         name: "admin",
         email,
-        role: "admin"
+        role: "admin",
       }),
     });
   } else {
@@ -85,7 +85,6 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create user
@@ -110,10 +109,10 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-// Update user (admin only)
+// Update user
 const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const { name, email, password } = req.body;
+  const { name } = req.body;
 
   const user = await User.findById(userId);
 
@@ -128,38 +127,6 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     user.name = name;
   }
 
-  if (email) {
-    // Check if email is valid
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        message: "Please provide a valid email address",
-      });
-    }
-
-    // Check if email is already in use by another user
-    const existingUser = await User.findOne({ email });
-    if (existingUser && existingUser._id.toString() !== userId) {
-      return res.status(400).json({
-        message: "Email is already in use by another user",
-      });
-    }
-
-    user.email = email;
-  }
-
-  if (password) {
-    // Check if password is strong enough
-    if (password.length < 6) {
-      return res.status(400).json({
-        message: "Password must be at least 6 characters long",
-      });
-    }
-
-    // Hash password
-    user.password = await bcrypt.hash(password, 10);
-  }
-
   // Save updated user
   const updatedUser = await user.save();
 
@@ -171,4 +138,4 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     message: "User updated successfully", // Added success message
   });
 });
-export { adminLogin, getAllUsers, deleteUser,createUser,updateUser };
+export { adminLogin, getAllUsers, deleteUser, createUser, updateUser };

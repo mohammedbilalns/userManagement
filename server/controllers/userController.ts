@@ -14,6 +14,7 @@ interface AuthenticatedRequest extends Request {
 
 const { log } = require("mercedlogger");
 
+// handles user registration 
 const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     try {
@@ -68,6 +69,8 @@ const registerUser = asyncHandler(
   }
 );
 
+
+// handles user login 
 const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -142,7 +145,6 @@ const updateUserProfile = asyncHandler(
     }
   }
 );
-
 
 const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({
