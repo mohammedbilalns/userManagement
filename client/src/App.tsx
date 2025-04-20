@@ -12,6 +12,7 @@ import AdminPublic from "./components/AdminPublic";
 import AdminProtected from "./components/AdminProtected";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -87,6 +88,7 @@ function App() {
               </AdminProtected>
             }
           />
+          <Route path="*" element={<NotFound></NotFound>}></Route>
         </Routes>
       </BrowserRouter>
     </>
