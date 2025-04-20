@@ -134,8 +134,9 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     _id: updatedUser._id,
     name: updatedUser.name,
     email: updatedUser.email,
+    profileImage: updatedUser.profileImage,
     createdAt: updatedUser.createdAt,
-    message: "User updated successfully", // Added success message
+    message: "User updated successfully",
   });
 });
 export { adminLogin, getAllUsers, deleteUser, createUser, updateUser };

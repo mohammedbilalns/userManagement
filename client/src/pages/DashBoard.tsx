@@ -28,6 +28,7 @@ function AdminDashboard() {
     email: "",
     password: "",
   });
+
   const [editUserData, setEditUserData] = useState<Partial<User>>({
     name: "",
   });
@@ -314,7 +315,6 @@ function AdminDashboard() {
               )}
 
               <div className="overflow-x-auto">
-                {/* Fixed height container to prevent layout shifts */}
                 <div className="min-h-[400px] relative">
                   {isSubmitting && (
                     <div className="absolute inset-0 bg-base-100 bg-opacity-50 flex items-center justify-center z-10">
@@ -337,9 +337,17 @@ function AdminDashboard() {
                             <td className="flex items-center gap-3">
                               <div className="avatar">
                                 <div className="w-10 rounded-full bg-base-200">
-                                  <span className="text-lg font-bold flex items-center justify-center w-full h-full">
-                                    {user.name?.charAt(0).toUpperCase() ?? "?"}
-                                  </span>
+                                  {user.profileImage ? (
+                                    <img
+                                      src={user.profileImage}
+                                      alt={user.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <span className="text-lg font-bold flex items-center justify-center w-full h-full">
+                                      {user.name?.charAt(0).toUpperCase() ?? "?"}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                               <div>{user.name}</div>

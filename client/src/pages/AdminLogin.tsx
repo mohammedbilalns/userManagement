@@ -5,11 +5,13 @@ import { AppDispatch, RootState } from "../app/store";
 import { adminLogin } from "../features/admin/adminSlice";
 
 export default function AdminLogin() {
+  // form data state 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  // form errors state 
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -29,6 +31,7 @@ export default function AdminLogin() {
     }
   }, [admin, navigate]);
 
+  // handle form change event 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
