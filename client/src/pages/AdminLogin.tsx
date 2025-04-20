@@ -19,7 +19,7 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { admin, isLoading} = useSelector(
+  const { admin, isLoading } = useSelector(
     (state: RootState) => state.admin
   );
 

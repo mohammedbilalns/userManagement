@@ -2,3 +2,33 @@
 @plugin "daisyui" {
     themes: all;
   }
+
+/* Toast Styles */
+.Toastify__toast--success {
+  background-color: hsl(var(--su)) !important;
+  color: hsl(var(--suc)) !important;
+}
+
+.Toastify__toast--error {
+  background-color: hsl(var(--er)) !important;
+  color: hsl(var(--erc)) !important;
+}
+
+.Toastify__toast--info {
+  background-color: hsl(var(--in)) !important;
+  color: hsl(var(--inc)) !important;
+}
+
+.Toastify__toast--warning {
+  background-color: hsl(var(--wa)) !important;
+  color: hsl(var(--wac)) !important;
+}
+
+.Toastify__close-button {
+  color: inherit !important;
+  opacity: 0.8 !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+}

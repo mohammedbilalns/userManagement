@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <>
+     
       <BrowserRouter>
         <Routes>
           <Route
@@ -35,7 +36,6 @@ function App() {
               <ProtectedRoute>
                 <>
                   <NavBar></NavBar>
-
                   <UserProfile />
                 </>
               </ProtectedRoute>
@@ -75,22 +75,21 @@ function App() {
             }
           />
         </Routes>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-          toastClassName="bg-base-200 text-base-content shadow-md rounded-lg border border-base-300"
-          progressClassName="bg-primary"
-        />
       </BrowserRouter>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        pauseOnHover={false}
+        draggable={false}
+        toastClassName="bg-base-100 text-base-content shadow-lg rounded-box border border-base-300 p-4 font-medium"
+        progressClassName="bg-primary"
+        closeButton={false}
+      />
     </>
   );
 }

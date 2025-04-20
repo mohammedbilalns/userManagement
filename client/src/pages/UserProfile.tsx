@@ -16,14 +16,12 @@ const ProfilePage: React.FC = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  // Initialize image preview when user data changes
   useEffect(() => {
     if (user?.profileImage) {
       setImagePreview(user.profileImage);
     }
   }, [user]);
 
-  console.log(imagePreview);
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -37,6 +35,7 @@ const ProfilePage: React.FC = () => {
   const CLOUDINARY_UPLOAD_PRESET = import.meta.env
     .VITE_CLOUDINARY_UPLOAD_PRESET;
 
+  // handle image uploading to cloudinary
   const uploadToCloudinary = async () => {
     if (!imageFile) return;
     setIsUploading(true);
@@ -72,6 +71,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // handle profile updation
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);

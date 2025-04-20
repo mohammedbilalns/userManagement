@@ -47,36 +47,42 @@ function AdminDashboard() {
     (state: RootState) => state.admin
   );
 
-  // Memoize the fetch users function to prevent unnecessary rerenders
+  // Memoize the fetch users function 
   const fetchUsers = useCallback(() => {
     dispatch(getUsers());
   }, [dispatch]);
 
   useEffect(() => {
-    // Fetch users immediately when component mounts
     fetchUsers();
   }, [admin, navigate, fetchUsers]);
 
-  // Separate effect for toast notifications to prevent unnecessary rerenders
   useEffect(() => {
+    let timer: number | undefined;
+
     if (message) {
+      // Clear any existing toasts and timers
       toast.dismiss();
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
 
       if (isError) {
         toast.error(message);
       } else if (isSuccess) {
         toast.success(message);
-        // Only reset submitting state when operation completes
         setIsSubmitting(false);
       }
 
-      // Delay the reset to avoid UI flashing
-      const timer = setTimeout(() => {
+      timer = window.setTimeout(() => {
         dispatch(resetAdmin());
       }, 4000);
-
-      return () => clearTimeout(timer);
     }
+
+    return () => {
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
+    };
   }, [isError, isSuccess, message, dispatch]);
 
   const handleDeleteUser = (userId: string, userName: string) => {
@@ -140,8 +146,6 @@ function AdminDashboard() {
         setNewUser({ name: "", email: "", password: "" });
         setCreateErrors({ name: "", email: "", password: "" });
       } else if (createUser.rejected.match(resultAction)) {
-        const errorMessage = resultAction.payload as string;
-        toast.error(errorMessage || "Failed to create user");
         setIsSubmitting(false);
       }
     } catch (error) {
@@ -183,6 +187,15 @@ function AdminDashboard() {
       isValid = false;
     } else if (newUser.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
+      isValid = false;
+    } else if (!/[A-Z]/.test(newUser.password)) {
+      newErrors.password = "Password must contain at least one capital letter.";
+      isValid = false;
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(newUser.password)) {
+      newErrors.password = "Password must contain at least one symbol.";
+      isValid = false;
+    } else if (!/[0-9]/.test(newUser.password)) {
+      newErrors.password = "Password must contain at least one number.";
       isValid = false;
     }
 
@@ -304,7 +317,12 @@ function AdminDashboard() {
 
               <div className="overflow-x-auto">
                 {/* Fixed height container to prevent layout shifts */}
-                <div className="min-h-[400px]">
+                <div className="min-h-[400px] relative">
+                  {isSubmitting && (
+                    <div className="absolute inset-0 bg-base-100 bg-opacity-50 flex items-center justify-center z-10">
+                      <LoadingSpinner />
+                    </div>
+                  )}
                   <table className="table table-zebra w-full">
                     <thead>
                       <tr>
@@ -450,9 +468,9 @@ function AdminDashboard() {
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
-                  className="btn btn-primary" 
+                <button
+                  type="submit"
+                  className="btn btn-primary"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -505,8 +523,8 @@ function AdminDashboard() {
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-primary"
                   disabled={isSubmitting}
                 >

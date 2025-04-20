@@ -16,9 +16,9 @@ const HomePage = () => {
             <h1 className="text-4xl font-bold text-base-content mb-4">
               Welcome,{user.name}
             </h1>
-            <p className="text-lg text-base-content opacity-70">
+            {/* <p className="text-lg text-base-content opacity-70">
               This is your dashboard home. You can navigate from here.
-            </p>
+            </p> */}
           </div>
 
           <div className="flex justify-center mt-10">

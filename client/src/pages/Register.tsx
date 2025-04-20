@@ -6,6 +6,7 @@ import { RootState } from "../app/store";
 import { AppDispatch } from "../app/store";
 import { User } from "../types/user.types";
 export default function Register() {
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,6 +22,7 @@ export default function Register() {
   });
 
   const { name, email, password, confirmPassword } = formData;
+ 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -77,6 +79,15 @@ export default function Register() {
       isValid = false;
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
+      isValid = false;
+    } else if (!/[A-Z]/.test(password)) {
+      newErrors.password = "Password must contain at least one capital letter.";
+      isValid = false;
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      newErrors.password = "Password must contain at least one symbol.";
+      isValid = false;
+    } else if (!/[0-9]/.test(password)) {
+      newErrors.password = "Password must contain at least one number.";
       isValid = false;
     }
 
