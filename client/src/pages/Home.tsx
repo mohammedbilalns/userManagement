@@ -5,6 +5,7 @@ import { logout } from "../features/auth/authSlice";
 const HomePage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
+
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -16,7 +17,6 @@ const HomePage = () => {
             <h1 className="text-4xl font-bold text-base-content mb-4">
               Welcome,{user.name}
             </h1>
-           
           </div>
 
           <div className="flex justify-center mt-10">

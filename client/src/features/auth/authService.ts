@@ -36,7 +36,7 @@ const login = async (userData: User) => {
 
 const logout = async () => {
   try {
-    await axios.post(API_URL + "/logout");
+    await axios.get(API_URL + "/logout");
   } catch (error) {
     console.warn("Logout request failed:", error);
   }
