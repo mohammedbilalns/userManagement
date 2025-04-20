@@ -5,6 +5,7 @@ interface PayloadType {
   id: Types.ObjectId | string;
   name: string;
   email: string;
+  role?: string;
   profileImage?: string;
 }
 

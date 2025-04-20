@@ -53,13 +53,13 @@ const protect = asyncHandler(async (req: AuthenticatedRequest, res: Response, ne
       res.status(401).json({
         message: "Not authorized, token failed",
       });
+      return;
     }
-  }
-
-  if (!token) {
+  } else {
     res.status(401).json({
       message: "Not authorized, no token",
     });
+    return;
   }
 });
 

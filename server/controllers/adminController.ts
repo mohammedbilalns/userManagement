@@ -19,6 +19,7 @@ const adminLogin = asyncHandler(async (req: Request, res: Response) => {
         id: "admin",
         name: "admin",
         email,
+        role: "admin"
       }),
     });
   } else {

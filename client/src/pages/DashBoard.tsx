@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import {
@@ -246,8 +246,6 @@ function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-base-200">
-      <ToastContainer position="top-right" autoClose={3000} />
-
       {/* Navbar */}
       <div className="navbar bg-primary text-primary-content shadow-lg">
         <div className="flex-1">

@@ -6,6 +6,7 @@ import {
   getAllUsers,
   updateUser,
 } from "../controllers/adminController";
+import authMiddleware from "../middleware/authMiddleware";
 
 const router = Router();
 
@@ -16,12 +17,25 @@ router.get("/logout", (req, res) => {
   });
 });
 
-router.get("/users", getAllUsers);
+router.use(authMiddleware.protect, authMiddleware.adminOnly);
+router.get(
+  "/users",
+  getAllUsers
+);
 
-router.post("/users", createUser);
+router.post(
+  "/users",
+  createUser
+);
 
-router.delete("/users/:userId", deleteUser);
+router.delete(
+  "/users/:userId",
+  deleteUser
+);
 
-router.put("/users/:userId", updateUser);
+router.put(
+  "/users/:userId",
+  updateUser
+);
 
 export default router;
