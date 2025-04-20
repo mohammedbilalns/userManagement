@@ -41,4 +41,19 @@ const updateProfile = async (userData: Partial<User>, token: string) => {
   }
 };
 
-export default { updateProfile };
+const verifyUser = async (token: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/verify`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error verifying user:", error);
+    const message = error.response?.data?.message || error.message || "Failed to verify user";
+    throw new Error(message);
+  }
+};
+
+export default { updateProfile, verifyUser };

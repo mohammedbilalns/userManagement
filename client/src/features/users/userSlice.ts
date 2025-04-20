@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import userService from "./userService";
 import { RootState } from "../../app/store";
 import { User } from "../../types/user.types";
+import { verifyUser } from "../auth/authSlice";
 
 const initialState = {
   isLoading: false,
@@ -14,7 +15,13 @@ export const updateProfile = createAsyncThunk(
   "user/updateProfile",
   async (userData: Partial<User>, thunkAPI) => {
     try {
-      const token = (thunkAPI.getState() as RootState).auth.user.token;
+      // verify if user still exists
+      await thunkAPI.dispatch(verifyUser());
+      
+      const token = (thunkAPI.getState() as RootState).auth.user?.token;
+      if (!token) {
+        throw new Error("No token found");
+      }
       return await userService.updateProfile(userData, token);
     } catch (err) {
       const error = err as Error;

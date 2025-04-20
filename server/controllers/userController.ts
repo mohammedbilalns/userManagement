@@ -151,4 +151,22 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     message: "Logged out successfully",
   });
 });
+
+export const verifyUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user?.id) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    res.status(200).json({ message: "User verified" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export { registerUser, loginUser, logoutUser, updateUserProfile };

@@ -21,7 +21,7 @@ const logout = async () => {
   localStorage.removeItem("admin");
 };
 
-//done
+
 const getUsers = async (token: string) => {
   const config = {
     headers: {

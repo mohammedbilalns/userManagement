@@ -4,6 +4,7 @@ import {
   loginUser,
   logoutUser,
   updateUserProfile,
+  verifyUser,
 } from "../controllers/userController";
 import authMiddleware from "../middleware/authMiddleware";
 
@@ -13,5 +14,6 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/logout", logoutUser);
 router.put("/update-profile", authMiddleware.protect, updateUserProfile);
+router.get("/verify", authMiddleware.protect, verifyUser);
 
 export default router;

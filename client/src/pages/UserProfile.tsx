@@ -3,24 +3,29 @@ import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { updateProfile } from "../features/users/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  console.log("User: ", user);
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [name, setName] = useState<string>(user.name);
-  const [email] = useState<string>(user.email);
+  const [name, setName] = useState<string>(user?.name || "");
+  const [email] = useState<string>(user?.email || "");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
     if (user?.profileImage) {
       setImagePreview(user.profileImage);
     }
-  }, [user]);
+  }, [user, navigate]);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,7 +63,7 @@ const ProfilePage: React.FC = () => {
       console.log("Upload successful:", data);
       if (!data.secure_url) {
         toast.error("Failed to upload image to Cloudinary");
-        return user.profileImage || null;
+        return user?.profileImage || null;
       }
       console.log("Upload successful:", data.secure_url);
       return data.secure_url;
@@ -80,16 +85,19 @@ const ProfilePage: React.FC = () => {
 
       const updatedUser = {
         name,
-        profileImage: imageUrl || user.profileImage,
+        profileImage: imageUrl || user?.profileImage,
       };
 
       const result = await dispatch(updateProfile(updatedUser) as any);
 
-      if (result.payload) {
+      if (result.meta.requestStatus === 'fulfilled') {
         toast.success("Profile updated successfully");
         setIsEditing(false);
         setName(updatedUser.name);
-        setImagePreview(imageUrl || user.profileImage);
+        setImagePreview(imageUrl || user?.profileImage);
+      } else if (result.error?.message === "User not found") {
+        toast.error("Your account has been deleted");
+        navigate("/login");
       } else {
         toast.error("Failed to update profile");
       }
@@ -112,9 +120,9 @@ const ProfilePage: React.FC = () => {
         <div className="p-6">
           <div className="flex flex-col items-center mb-6">
             <div className="relative mb-4">
-              {imagePreview || user.profileImage ? (
+              {imagePreview || user?.profileImage ? (
                 <img
-                  src={imagePreview || user.profileImage}
+                  src={imagePreview || user?.profileImage}
                   alt="Profile"
                   className="w-32 h-32 object-cover rounded-full border-4 border-primary"
                 />
